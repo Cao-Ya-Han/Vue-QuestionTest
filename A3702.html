@@ -1,0 +1,686 @@
+﻿<html>
+
+<head>
+    <meta charset="utf-8">
+    <!-- 
+        <meta http-equiv="Content-Security-Policy"
+            content="default-src "self" data: gap: https://ssl.gstatic.com "unsafe-eval"; style-src "self" "unsafe-inline"; media-src *; img-src "self" data: content:;">
+        -->
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src * gap://ready file:; style-src * 'unsafe-inline'; img-src * 'self' data:; script-src * 'unsafe-inline' 'unsafe-eval'">
+
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
+
+    <link href="../www/css/bootstrap5.0.2/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+
+
+    <script src="js/vender/vue@2.6.14.js"></script>
+    <script src="js/vender/axios.js"></script>
+    <script src="js/bootstrap/bootstrap.min.js"></script>
+
+    <script src="js/vender/sortable.js"></script>
+    <script src="js/vender/moment.min.js"></script>
+    <script src="js/questionnaire.js"></script>
+
+    <style>
+        body {
+            font-family: "Microsoft JhengHei";
+        }
+
+        .borderShow {
+            background-color: rgb(207, 234, 255);
+            border: 3px solid rgba(255, 255, 255, 0);
+        }
+
+        .borderShow:hover {
+            border-left: 3px solid rgba(255, 0, 0, 0.5) !important;
+        }
+
+        .handle {
+            padding: 5px;
+            margin-right: 10px;
+            cursor: move;
+        }
+
+        .pageTitle,
+        .pageFooter {
+            background-color: rgb(29, 32, 136);
+            width: 100vw;
+        }
+
+        .pageTitle {
+            height: min(max(14vmin, 1rem), 5rem);
+        }
+
+        .pageFooter {
+            height: min(max(10vmin, 1rem), 3rem);
+        }
+
+        .pageTitle>div>div>label,
+        .pageFooter>div>button {
+            color: white;
+            border-right-color: rgb(5, 5, 5);
+        }
+
+        .contextFooter>div>button {
+            font-size: min(max(3vmin, 0.8rem), 1.2rem);
+        }
+
+        .pageTitle>div>div>label {
+            font-size: min(max(5vmin, 1rem), 1.5rem);
+        }
+
+        .backBtn {
+            width: min(max(4vmin, 1.5rem), 20rem);
+        }
+
+        .pageBody {
+            margin-top: min(max(16vmin, 1rem), 6rem);
+            margin-bottom: min(max(12vmin, 1rem), 3rem);
+        }
+
+        .questType {
+            border-left: 2px solid rgb(255, 255, 255);
+            /* border-right: 2px solid rgb(255, 255, 255); */
+            font-size: min(max(3vmin, 1rem), 3rem);
+        }
+
+        .remark {
+            font-size: min(max(0.5vmin, 0.2rem), 0.2rem);
+            color: rgb(255, 255, 255);
+        }
+
+        .questId {
+            font-size: min(max(0.5vmin, 0.2rem), 0.2rem);
+            color: rgb(0, 0, 0);
+        }
+
+        textarea:active,
+        textarea:focus,
+        textarea:hover,
+        input:active,
+        input:focus,
+        input:hover,
+        button:active,
+        button:focus,
+        .btn.active,
+        .btn:active {
+            box-shadow: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="fixed-top vw-100 pageTitle ">
+            <div class="row h-100 d-flex justify-content-between align-items-center">
+                <div class="col-auto text-center">
+                    <button type="button" class="btn rounded-0" @click="goBack('index')">
+                        <img class="backBtn" src="images/s_backPage.png">
+                    </button>
+                </div>
+                <div class="col text-center">
+                    <label>總部通報</label>
+                </div>
+                <div class="col-2">
+                </div>
+            </div>
+        </div>
+        <div id="pageBody" class="container overflow-scroll pageBody">
+            <div class="container">
+                <div class="row mt-2">
+                    <div class="col-12">
+                        <label class="form-label">通報名稱 ({{questSysId}})</label>
+                        <input type="text" class="form-control" v-model="question.questTitle">
+                        <!-- <label class="form-label">通報名稱 (111)</label>
+                        <input type="text" class="form-control"> -->
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row mt-2">
+                    <div class="col">
+                        <label class="form-label">通報類別</label>
+                        <select class="form-select" v-model="question.questType"
+                            @change="onQuestTypeChang(question.questType)">
+                            <option v-for="questType in questTypes" v-bind:value="questType.questType">
+                                {{ questType.questTypeName }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label class="form-label">通報類別項目</label>
+                        <select class="form-select" v-model="question.questTypeD">
+                            <option v-for="item in curQuestTypeItems" v-bind:value="item.questTypeD">
+                                {{ item.questTypeDName }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-6">
+                        <label class="form-label">通報起始日期</label>
+                        <input id="questDateStart" type="date" class="form-control" v-model="question.questDateStart">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">通報起始時間</label>
+                        <input id="questTimeStart" type="time" class="form-control" v-model="question.questTimeStart">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-6">
+                        <label class="form-label">通報結束日期</label>
+                        <input id="questDateEnd" type="date" class="form-control" v-model="question.questDateEnd">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">通報結束時間</label>
+                        <input id="questTimeEnd" type="time" class="form-control" v-model="question.questTimeEnd">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <label class="form-label">通報模式</label>
+                        <select class="form-select" v-model="question.pageType">
+                            <option v-for="item in pageTypes" v-bind:value="item.statusId">
+                                {{ item.statusName }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <label class="form-label">通報狀態</label>
+                        <select class="form-select" v-model="question.isVisible">
+                            <option v-for="item in publicTypes" v-bind:value="item.statusId">
+                                {{ item.statusName }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <label class="form-label">通報內容</label>
+                        <textarea class="form-control" rows="3" v-model="question.questDesc"></textarea>
+                    </div>
+                </div>
+                <div class="container mt-2">
+                    <div class="row">
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-primary rounded-0 " @click="onPicture()">選擇照片</button>
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-primary rounded-0" @click="onCamera">拍照</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col" v-bind:id="img.id" v-for="img in questFs">
+                        <a href="#" name="imgViewer" v-bind:id="img.id" style="padding:10px;">
+                            <img v-bind:id="img.id" name="Imgs" v-bind:src="img.base64Str" class="mt-2"
+                                style="width: min(max(25vmin, 5rem), 10rem);" />
+                        </a>
+                        <a name="del" delNum="'sp_'img.id" style="color:red" @click=onRemove(img)>刪除</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fixed-bottom pageFooter">
+            <div class="btn-group w-100" role="group">
+                <button type="button" class="btn btn-primary rounded-0 w-10" @click="onSave()">存檔</button>
+                <button type="button" class="btn btn-primary rounded-0 w-10" :disabled="isEdit == false"
+                    @click="goBack('A3703')">設定題目</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const vm = new Vue({
+            el: '#app',
+            data: {
+                actionType: 'add',
+                isEdit: true,
+                questSysId: 0,
+                questTypes: [],
+                questTypeItems: [],
+                curQuestTypeItems: [],
+                publicTypes: [],
+                pageTypes: [],
+                question: {
+                    questSysId: 0,
+                    questType: '',
+                    questTypeD: '',
+                    questTitle: '',
+                    questDateStart: '',
+                    questDateEnd: '',
+                    questTimeStart: '',
+                    questTimeEnd: '',
+                    questDesc: '',
+                    questDateTimeStart: '',
+                    questDateTimeEnd: '',
+                    isVisible: '',
+                    hasItems: false,
+                    isPush: false,
+                    pageType: '',
+                    sysUserId: 0
+                },
+                questFs: [],
+                checkResult: true
+            },
+            created: async function () {
+
+                let qts = {
+                    Message: null,
+                    ResultCode: 10,
+                    Source: [
+                        {
+                            questType: "",
+                            questTypeName: "請選擇通報類別",
+                        },
+                        {
+                            questType: "00",
+                            questTypeName: "政令佈達",
+                        },
+                        {
+                            questType: "10",
+                            questTypeName: "營運聚焦",
+                        },
+                    ],
+                    Value: null
+                }
+                this.questTypes = qts.Source;
+
+                let qis = {
+                    Message: null,
+                    ResultCode: 10,
+                    Source: [
+                        {
+                            questType: "",
+                            questTypeD: "",
+                            questTypeDName: "請選擇通報類別"
+                        },
+                        {
+                            questType: "00",
+                            questTypeD: "000001",
+                            questTypeDName: "營運通知單",
+                        },
+                        {
+                            questType: "00",
+                            questTypeD: "000002",
+                            questTypeDName: "規範/辦法",
+                        },
+                        {
+                            questType: "10",
+                            questTypeD: "100001",
+                            questTypeDName: "聚焦經營追蹤",
+                        },
+                        {
+                            questType: "10",
+                            questTypeD: "100002",
+                            questTypeDName: "生鮮激勵",
+                        },
+                        {
+                            questType: "10",
+                            questTypeD: "100003",
+                            questTypeDName: "金王牌分數",
+                        },
+                    ],
+                    Value: null
+                }
+                this.questTypeItems = qis.Source;
+
+                let publicTypes = {
+                    Message: null,
+                    ResultCode: 10,
+                    Source: [
+                        {
+                            statusId: "",
+                            statusName: "請選擇通報狀態",
+                        },
+                        {
+                            statusId: "00",
+                            statusName: "不公開",
+                        },
+                        {
+                            statusId: "01",
+                            statusName: "公開",
+                        },
+                    ],
+                    Value: null
+                }
+                this.publicTypes = publicTypes.Source;
+
+                let pageTypes = {
+                    Message: null,
+                    ResultCode: 10,
+                    Source: [
+                        {
+                            statusId: "",
+                            statusName: "請選擇通報狀態",
+                        },
+                        {
+                            statusId: "10",
+                            statusName: "通報",
+                        },
+                        {
+                            statusId: "20",
+                            statusName: "檢閱"
+                        },
+                    ],
+                    Value: null
+                }
+                this.pageTypes = pageTypes.Source;
+
+                // 取得網址參數
+                const urlParams = new URLSearchParams(window.location.search);
+                this.actionType = urlParams.get('actionType');
+                this.questSysId = urlParams.get('questSysId');
+                const queryType = urlParams.get('queryType');
+                const questType = urlParams.get('questType');
+                const adminLevel = urlParams.get('adminLevel');
+
+                let param = `actionType=${this.actionType}&queryType=${queryType}&questType=${questType}&adminLevel=${adminLevel}`;
+                localStorage.A37Url = param
+
+                if (this.actionType === 'fix') {
+                    this.isEdit = true;
+                }
+                if (localStorage.question == null) {
+                    const startAt = getDateTime(8);
+                    const endAt = getDateTime(17);
+                    this.question.questDateStart = getYYYYMMDD(startAt);
+                    this.question.questTimeStart = getHHmm(startAt);
+                    this.question.questDateEnd = getYYYYMMDD(endAt);
+                    this.question.questTimeEnd = getHHmm(endAt);
+                    return;
+                }
+                await this.reload(this.questSysId);
+            },
+            methods: {
+                async reload(questSysId) {
+                    if (localStorage.question == null) {
+                        return;
+                    }
+
+                    this.question = JSON.parse(localStorage.question)
+                    this.question.questDateStart = getYYYYMMDD(this.question.questDateTimeStart);
+                    this.question.questTimeStart = getHHmm(this.question.questDateTimeStart);
+                    this.question.questDateEnd = getYYYYMMDD(this.question.questDateTimeEnd);
+                    this.question.questTimeEnd = getHHmm(this.question.questDateTimeEnd);
+
+                    this.onQuestTypeChang(this.question.questType);
+
+                },
+                async getQuestF(questSysId) {
+                    let resp = await axios.get(`/api/Question/getQuestF?questSysId=${questSysId}`);
+                    if (resp.ResultCode != 10) {
+                        alert('檔案讀取失敗');
+                        return;
+                    }
+                    if (resp.Source == null) {
+                        return;
+                    }
+                    this.questFs = resp.Source;
+
+                    this.questFs.forEach((x, index) => {
+                        x.index = index + 1
+                    })
+                },
+                async onQuestTypeChang(questType) {
+                    if (this.questTypeItems.length <= 0) {
+                        return;
+                    }
+                    this.curQuestTypeItems = this.questTypeItems.filter(
+                        (x) => x.questType == questType
+                    );
+                },
+                async onSave() {
+                    this.question.questDateTimeStart = getYYYYMMDDHHmm(
+                        this.question.questDateStart + " " + this.question.questTimeStart
+                    );
+                    this.question.questDateTimeEnd = getYYYYMMDDHHmm(
+                        this.question.questDateEnd + " " + this.question.questTimeEnd
+                    );
+                    this.isChange = false;
+
+                    if (this.question.isVisible === '') {
+                        alert('通報狀態未選擇')
+                        this.checkResult = false;
+                        return;
+                    }
+                    if (this.question.pageType == "") {
+                        alert("通報模式未選擇");
+                        this.checkResult = false;
+                        return;
+                    }
+                    if (this.question.questTitle == "") {
+                        alert("通報名稱未輸入");
+                        this.checkResult = false;
+                        return;
+                    }
+
+                    if (this.question.questTitle == "") {
+                        alert("通報名稱未輸入");
+                        this.checkResult = false;
+                        return;
+                    }
+                    if (this.question.questType == "") {
+                        alert("通報類別未選擇");
+                        this.checkResult = false;
+                        return;
+                    }
+                    if (this.question.questTypeD == "") {
+                        alert("通報類型項目未選擇");
+                        this.checkResult = false;
+                        return;
+                    }
+                    if (this.question.questDesc == "") {
+                        alert("通報說明未輸入");
+                        this.checkResult = false;
+                        return;
+                    }
+                    this.checkResult = true;
+
+                    localStorage.question = JSON.stringify(this.question)
+                    console.log(localStorage.question)
+
+                    alert('存檔成功')
+
+                    if (this.isEdit === false) {
+
+                        await this.goBack('A3703')
+                    }
+                },
+
+                async onPicture() {
+                    let imgMax = 3;
+                    if (this.questFs === null) {
+                        imgMax = imgMax
+                    }
+                    else {
+                        imgMax = imgMax - this.questFs.length
+                    }
+
+                    if (imgMax <= 0) {
+                        alert('照片已達上限數');
+                        return;
+                    }
+                    let imgs = await this.handelPicture(imgMax);
+                    for (let img of imgs) {
+                        let data = {
+                            index: 0,
+                            id: 0,
+                            questSysId: this.questSysId,
+                            extension: 'jpg',
+                            base64Str: img,
+                            isNotice: 1
+                        }
+                        this.questFs.push(data);
+                    }
+                    this.questFs.forEach((x, index) => {
+                        x.index = index + 1
+                    })
+                },
+                async onCamera() {
+                    let imgMax = 3 - this.questFs.length
+
+                    if (imgMax <= 0) {
+                        alert('照片已達上限數');
+                        return;
+                    }
+                    let options = {
+                        quality: 50,
+                        destinationType: Camera.DestinationType.DATA_URL,
+                        sourceType: Camera.PictureSourceType.CAMERA,
+                        encodingType: Camera.EncodingType.JPEG,
+                        mediaType: Camera.MediaType.PICTURE,
+                        allowEdit: false,
+                        correctOrientation: true
+                    }
+                    navigator.camera.getPicture(resp => {
+                        let img = {
+                            index: 0,
+                            id: 0,
+                            questSysId: this.questSysId,
+                            extesion: 'jpg',
+                            base64Str: 'data:image/png;base64,' + resp,
+                            isNotice: 1,
+                        }
+                        this.questFs.push(img);
+                    }, e => {
+                        alert(e);
+                    }, options)
+
+                    this.questFs.forEach((e, index) => {
+                        e.index = index + 1.
+                        e.sysUserId = this.questSysId
+                    });
+                },
+                async handelPicture(imgMax = 3) {
+                    return new Promise((resolve, reject) => {
+                        if (device.platform.toUpperCase() == 'ANDROID') {
+                            cordova.plugins.diagnostic.requestExternalStorageAuthorization(function (status) {
+                                if (status == 'GRANTED') {
+                                    var options = {
+                                        maximumImagesCount: imgMax,
+                                        quality: 50
+                                    };
+                                    window.imagePicker.getPictures(success, fail, options);
+                                    function success(resp) {
+                                        resolve(resp)
+                                    }
+                                    function fail(e) {
+                                        reject(null)
+                                    }
+                                }
+                            }, function (error) {
+                                navigator.notification.alert(error, null, '錯誤', '確定');
+                            });
+                        } else {
+                            var options = {
+                                maximumImagesCount: imgMax,
+                                quality: 50,
+                                height: 1440
+                            };
+                            window.imagePicker.getPictures(success, fail, options);
+                            function success(resp) {
+                                resolve(resp)
+                            }
+                            function fail(e) {
+                                reject(null)
+                            }
+                        }
+                    })
+                },
+                async onRemove(img) {
+                    let flag = await checkComfirm('確定要刪除嗎?')
+                    if (flag !== true) {
+                        return;
+                    }
+                    this.questFs = await this.questFs.filter(x => {
+                        return x.index != img.index
+                    })
+                    // if (img.id > 0) {
+                    //     //await uploadImg();
+                    //     let url = "/api/Question/DeleteQuestF?id=" + img.id;
+                    //     const res = await axios.get(url);
+                    //     this.reload();
+                    // }
+                },
+                async uploadImg() {
+                    let resp = '';
+                    for (let questF of this.questFs) {
+                        if (questF.base64Str.includes('file')) {
+                            questF.base64Str = await base64File(questF.base64Str);
+                        } else {
+                            questF.base64Str = questF.base64Str
+                        }
+                        questF.extension = 'jpg';
+                        questF.questSysId = this.questSysId;
+                    }
+
+                    if (this.actionType === 'fix' && this.questFs.length <= 0) {
+                        let url = "/api/Question/DeleteAllQuestF?questSysId=" + this.questSysId;
+                        resp = await axios.get(url);
+                    } else {
+                        resp = await axios.post('/api/Question/UplaodFile2', this.questFs)
+                    }
+
+
+                    if (resp.ResultCode != 10) {
+                        //alert('上傳圖檔失敗');
+                        return;
+                    }
+                    return true;
+                    //this.reload(this.questSysId);
+                },
+                async goBack(name) {
+                    if (this.isEdit === true) {
+                        checkComfirm('離開此頁面將遺失本次修改資料，是否需儲存資料').then((value => {
+                            if (value === true) {
+                                this.onSave()
+                            }
+                            if (this.checkResult === true) {
+                                if (name == 'A37') {
+                                    goPage(name, localStorage.A37Url);
+                                    return;
+                                }
+                                if (name == 'A3703' || name == 'index') {
+                                    para = `questSysId=${this.questSysId}&actionType=${this.actionType}`;
+                                    goPage(name, para);
+                                    return;
+                                }
+                            }
+                        }))
+                    } else {
+                        if (this.checkResult === true) {
+                            if (name == 'A37') {
+                                goPage(name, localStorage.A37Url);
+                                return;
+                            }
+                            if (name == 'A3703' || name == 'index') {
+                                para = `questSysId=${this.questSysId}&actionType=${this.actionType}`;
+                                goPage(name, para);
+                                return;
+                            }
+                        }
+                    }
+                },
+                async showError(text, action = '') {
+                    //Todo 因使用 navigator.notification.confirm 會無法呼叫到其他的Vue的方法，固可加入promise方式測試
+                    navigator.notification.confirm(text, function (a) {
+                        action
+                    }, '訊息', ['確定']);
+                }
+            },
+        });
+        vm.$mount('#app');
+    </script>
+
+</body>
+
+</html>
