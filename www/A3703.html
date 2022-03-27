@@ -1,0 +1,810 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src * gap://ready file:; style-src * 'unsafe-inline'; img-src * 'self' data:; script-src * 'unsafe-inline' 'unsafe-eval'">
+
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport"
+        content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, viewport-fit=cover">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+
+    <script src="../www/js/vender/vue@2.6.14.js"></script>
+    <script src="../www/js/vender/axios.js"></script>
+    <script src="../www/js/bootstrap/bootstrap.min.js"></script>
+
+    <script src="../www/js/vender/sortable.js"></script>
+    <script src="../www/js/vender/moment.min.js"></script>
+    <script src="../www/js/questionnaire.js"></script>
+
+    <style>
+        .handle {
+            padding: 5px;
+            cursor: move;
+            background-color: rgba(131, 144, 240, 0.063);
+        }
+
+        .borderShow {
+            outline: 1px solid #d6d6d6;
+            border: 3px solid rgba(255, 255, 255, 0);
+        }
+
+        .borderShow:hover {
+            border-left: 3px solid rgba(0, 38, 255, 0.5) !important;
+        }
+
+        .topicTextLine {
+            border: none;
+            background-color: rgb(248, 248, 248);
+            border-bottom: 2px solid rgb(197, 197, 197);
+        }
+
+        .topicTextLine:hover {
+            border: none;
+            background-color: rgb(237, 237, 237);
+            border-bottom: 2px solid rgba(0, 38, 255, 0.5);
+        }
+
+        .itemTextLine {
+            border: none;
+            border-bottom: 1px solid rgb(197, 197, 197);
+        }
+
+        .itemTextLine:hover {
+            border: none;
+            border-bottom: 2px solid rgba(0, 38, 255, 0.5);
+        }
+
+        .container-body,
+        .container-footer,
+        .container-items {
+            margin-top: 10px;
+        }
+
+        .container-item {
+            margin-top: 10px;
+        }
+
+        .itemClose {
+            margin-left: -42px !important;
+            z-index: 100 !important;
+        }
+
+        textarea:active,
+        textarea:focus,
+        textarea:hover,
+        input:active,
+        input:focus,
+        input:hover,
+        button:active,
+        button:focus,
+        .btn.active,
+        .btn:active {
+            box-shadow: none !important;
+        }
+
+        .pageTitle,
+        .pageFooter {
+            background-color: rgb(29, 32, 136);
+            width: 100vw;
+        }
+
+        .pageTitle {
+            height: min(max(14vmin, 1rem), 5rem);
+        }
+
+        .pageFooter {
+            height: min(max(10vmin, 1rem), 3rem);
+        }
+
+        .pageTitle>div>div>label,
+        .pageFooter>div>button {
+            color: white;
+            border-right-color: rgb(5, 5, 5);
+        }
+
+        .pageTitle>div>div>label {
+            font-size: min(max(5vmin, 1rem), 1.5rem);
+        }
+
+        .pageBody {
+            margin-top: min(max(16vmin, 1rem), 6rem);
+            margin-bottom: min(max(12vmin, 1rem), 3rem);
+        }
+
+        .backBtn {
+            width: min(max(4vmin, 1.5rem), 20rem);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="fixed-top vw-100 pageTitle ">
+            <div class="row h-100 d-flex justify-content-between align-items-center">
+                <div class="col-auto text-center">
+                    <button type="button" class="btn rounded-0" @click="goBack('A3702')">
+                        <img class="backBtn" src="images/s_backPage.png">
+                    </button>
+                </div>
+                <div class="col text-center">
+                    <label>總部通報</label>
+                </div>
+                <div class="col-2">
+                </div>
+            </div>
+        </div>
+        <form name="form1" class="bg-gradient pageBody">
+            <div class="mb-3 mt-3">
+                <select class="form-select" v-model="itemType">
+                    <option value="" disabled>請選擇</option>
+                    <option v-for="item in itemTypes" v-bind:value="item">
+                        {{ item.questItemTypeName }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="yyyd-md-flex justify-content-md-end">
+                <button type="button" class="btn btn-light d-flex justify-content-end" @click="addElement()">新增</button>
+            </div>
+
+            <div class="list-group drag p20">
+                <div id="doc" class="list-group" handle=".handle">
+                    <component v-for="control in formControls" v-bind:is="control.type" v-bind:key="control.id"
+                        v-bind:field="control" v-on:on-remove="onRemove">
+                    </component>
+                </div>
+            </div>
+        </form>
+        <div class="fixed-bottom pageFooter">
+            <div class="btn-group w-100" role="group">
+                <button type="button" class="btn btn-primary rounded-0 w-10" @click="onSave()">存檔</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 文字題 -->
+    <script type="text/x-template" id="form-textbox">
+        <div class ="container mt-2" v-bind:id="field.id">
+            <div class="list-group-item rounded borderShow">
+                <!-- header -->
+                <div class="container-header">
+                    <div class="d-flex justify-content-center handle">
+                        <i class="bi bi-list"></i>
+                    </div>
+                </div>
+                <!-- body -->
+                <div class="container-body">
+                    <div class="row container-topic">
+                        <div class="col-12">
+                            <input type="text" class="form-control  rounded-0 rounded-top topicTextLine" v-model="field.title" />
+                        </div>
+                    </div>
+                </div>
+                <!-- footer -->
+                <div class="container-footer">
+                    <hr>
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <label class="col-auto col-form-label">{{field.name}}</label>
+                        </div>
+                        <div class="col-9">
+                            <div class="row d-flex justify-content-end">
+                                <div class="col-2 border-end" @click="onRemove(field)">
+                                    <i class="bi bi-trash"></i>
+                                </div>
+                                <div class="col-5">
+                                    <div class="input-group">              
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" v-model="field.required">
+                                            <label class="form-check-label">必填</label>
+                                        </div>
+                                    </div>
+                                </div>             
+                            </div>
+                        </div>
+                    </div>     
+                </div>  
+            </div>
+        </div>
+    </script>
+
+    <!-- 單選題 -->
+    <script type="text/x-template" id="form-radio">
+        <div class ="container mt-2" v-bind:id="field.id">
+            <div class="list-group-item rounded borderShow">
+                 <!-- header -->
+                <div class="container-header">
+                    <div class="d-flex justify-content-center handle" @click="onSelected">
+                        <i class="bi bi-list"></i>
+                    </div>
+                </div>
+                <!-- body -->
+                <div class="container-body">
+                    <div class="row container-topic">
+                        <div class="col-12">
+                            <input type="text" class="form-control rounded-0 rounded-top topicTextLine" v-model="field.title" />
+                        </div>
+                    </div>
+                    <div class="row container-items">
+                        <div class="col-12">
+                            <div class="input-group align-items-center container-item" :id="'option-'+item.index" v-for="item in field.values">
+                                <div>
+                                    <input class="form-check-input" type="radio" :value="item.value" v-model="field.value" disabled>
+                                </div>
+                                <input type="text" class="form-control ms-3 rounded-top itemTextLine" v-model="item.label"/>
+                                <button type="button" class="btn bg-transparent itemClose" @click="onItemRemove(item.index)">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>   
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-link ms-3" type="button" @click="onAdd()">新增選項</button>
+                        </div>
+                    </div>
+                </div>
+                <!--footer-->
+                <div class="container-footer">
+                    <hr>
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <label class="col-auto col-form-label">{{field.name}}</label>
+                        </div>
+                        <div class="col-9">
+                            <div class="row d-flex justify-content-end">
+                                <div class="col-2 border-end" @click="onRemove(field)">
+                                    <i class="bi bi-trash"></i>
+                                </div>
+                                <div class="col-5">
+                                    <div class="input-group">              
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" v-model="field.required">
+                                            <label class="form-check-label" >必填</label>
+                                        </div>
+                                    </div>
+                                </div>             
+                            </div>
+                        </div>
+                    </div> 
+                </div>  
+            </div>
+        </div>
+    </script>
+
+    <!-- 多選題 -->
+    <script type="text/x-template" id="form-checkbox">
+        <div class ="container mt-2" v-bind:id="field.id">
+            <div class="list-group-item rounded borderShow">
+                    <!-- header -->
+                <div class="container-header">
+                    <div class="d-flex justify-content-center handle" @click="onSelected">
+                        <i class="bi bi-list"></i>
+                    </div>
+                </div>
+                <!-- body -->
+                <div class="container-body">
+                    <div class="row container-topic">
+                        <div class="col-12">
+                            <input type="text" class="form-control rounded-0 rounded-top topicTextLine" v-model="field.title" />
+                        </div>
+                    </div>
+                    <div class="row container-items">
+                        <div class="col-12">
+                            <div class="input-group align-items-center container-item" v-for="item in field.values">
+                                <div>
+                                    <input class="form-check-input" type="checkbox" :value="item.value" v-model="field.value" disabled>
+                                </div>
+                                <input type="text" class="form-control ms-3 rounded-top itemTextLine" v-model="item.label"/>
+                                <button type="button" class="btn bg-transparent itemClose" @click="onItemRemove(item.index)">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>   
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-link ms-3" type="button" @click="onAdd()">新增選項</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- footer -->
+                <div class="container-footer">
+                    <hr>
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <label class="col-auto col-form-label">{{field.name}}</label>
+                        </div>
+                        <div class="col-9">
+                            <div class="row d-flex justify-content-end">
+                                <div class="col-2 border-end" @click="onRemove(field)">
+                                    <i class="bi bi-trash"></i>
+                                </div>
+                                <div class="col-5">
+                                    <div class="input-group">              
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" v-model="field.required">
+                                            <label class="form-check-label">必填</label>
+                                        </div>
+                                    </div>
+                                </div>             
+                            </div>
+                        </div>
+                    </div> 
+                </div>  
+            </div>
+        </div>
+    </script>
+
+    <!-- 數字滑桿題 range -->
+    <script type="text/x-template" id="form-range">
+        <div class ="container mt-2" v-bind:id="field.id">
+            <div class="list-group-item rounded borderShow">
+                <!-- header -->
+                <div class="container-header">
+                    <div class="d-flex justify-content-center handle">
+                        <i class="bi bi-list"></i>
+                    </div>
+                </div>
+                <!-- body -->
+                <div class="container-body">
+                    <div class="row container-topic">
+                        <div class="col-12">
+                            <input type="text" class="form-control  rounded-0 rounded-top topicTextLine" v-model="field.title" />
+                        </div>
+                    </div>
+                    <div class="row container-items">
+                        <div class="row">
+                            <div class="col-12">
+                                <input type="range" class="form-range" v-model="field.value" v-bind:min="field.min" v-bind:max="field.max" v-bind:step="field.step">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <label>最小值</label>
+                                <input class= "form-control rounded-0 rounded-top itemTextLine" type="text"  v-model="field.min">
+                            </div>
+                            <div class="col-6">
+                                <label>最大值</label>
+                                <input class= "form-control rounded-0 rounded-top itemTextLine" type="text"  v-model="field.max">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <label>選擇值</label>
+                                <input class= "form-control rounded-0 rounded-top itemTextLine" type="text"  v-model="field.value">
+                            </div>
+                            <div class="col-6">
+                                <label>間隔值</label>
+                                <input class= "form-control rounded-0 rounded-top itemTextLine" type="text"  v-model="field.step">
+                            </div>
+                        </div>                       
+                    </div>
+                </div>
+                <!-- footer -->
+                <div class="container-footer">
+                    <hr>
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <label class="col-auto col-form-label">{{field.name}}</label>
+                        </div>
+                        <div class="col-9">
+                            <div class="row d-flex justify-content-end">
+                                <div class="col-2 border-end" @click="onRemove(field)">
+                                    <i class="bi bi-trash"></i>
+                                </div>
+                                <div class="col-5">
+                                    <div class="input-group">              
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" v-model="field.required">
+                                            <label class="form-check-label">必填</label>
+                                        </div>
+                                    </div>
+                                </div>             
+                            </div>
+                        </div>
+                    </div>     
+                </div>  
+            </div>
+        </div>  
+    </script>
+
+    <!-- 數字題 form-number -->
+    <script type="text/x-template" id="form-number">
+        <div class ="container mt-2" v-bind:id="field.id">
+            <div class="list-group-item rounded borderShow">
+                <!-- header -->
+                <div class="container-header">
+                    <div class="d-flex justify-content-center handle">
+                        <i class="bi bi-list"></i>
+                    </div>
+                </div>
+                <!-- body -->
+                <div class="container-body">
+                    <div class="row container-topic">
+                        <div class="col-12">
+                            <input type="text" class="form-control  rounded-0 rounded-top topicTextLine" v-model="field.title" />
+                        </div>
+                    </div>
+                    <div class="row container-items">
+                        <div class="col-6">
+                            <label>最小值</label>
+                            <input class= "form-control rounded-0 rounded-top itemTextLine" type="text"  v-model="field.min">
+                        </div>
+                        <div class="col-6">
+                            <label>最大值</label>
+                            <input class= "form-control rounded-0 rounded-top itemTextLine" type="text"  v-model="field.max">
+                        </div>
+                    </div>
+                </div>
+                <!-- footer -->
+                <div class="container-footer">
+                    <hr>
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <label class="col-auto col-form-label">{{field.name}}</label>
+                        </div>
+                        <div class="col-9">
+                            <div class="row d-flex justify-content-end">
+                                <div class="col-2 border-end" @click="onRemove(field)">
+                                    <i class="bi bi-trash"></i>
+                                </div>
+                                <div class="col-5">
+                                    <div class="input-group">              
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" v-model="field.required">
+                                            <label class="form-check-label">必填</label>
+                                        </div>
+                                    </div>
+                                </div>             
+                            </div>
+                        </div>
+                    </div>     
+                </div>  
+            </div>
+        </div>  
+    </script>
+
+    <!-- 日期 form-date -->
+    <script type="text/x-template" id="form-date">
+        <div class ="container mt-2" v-bind:id="field.id">
+            <div class="list-group-item rounded borderShow">
+                <!-- header -->
+                <div class="container-header">
+                    <div class="d-flex justify-content-center handle">
+                        <i class="bi bi-list"></i>
+                    </div>
+                </div>
+                <!-- body -->
+                <div class="container-body">
+                    <div class="row container-topic">
+                        <div class="col-12">
+                            <input type="text" class="form-control  rounded-0 rounded-top topicTextLine" v-model="field.title" />
+                        </div>
+                    </div>
+                    <div class="row container-items">
+                        <div class="row">
+                            <div class="col">
+                                <input class= "form-control rounded-top itemTextLine" type="date" v-model="field.date">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- footer -->
+                <div class="container-footer">
+                    <hr>
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <label class="col-auto col-form-label">{{field.name}}</label>
+                        </div>
+                        <div class="col-9">
+                            <div class="row d-flex justify-content-end">
+                                <div class="col-2 border-end" @click="onRemove(field)">
+                                    <i class="bi bi-trash"></i>
+                                </div>
+                                <div class="col-5">
+                                    <div class="input-group">              
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" v-model="field.required">
+                                            <label class="form-check-label">必填</label>
+                                        </div>
+                                    </div>
+                                </div>             
+                            </div>
+                        </div>
+                    </div>     
+                </div>  
+            </div>
+        </div>  
+    </script>
+
+    <!-- form-datetime -->
+    <script type="text/x-template" id="form-datetime">
+
+        <div class ="container mt-2" v-bind:id="field.id">
+            <div class="list-group-item rounded borderShow">
+                <!-- header -->
+                <div class="container-header">
+                    <div class="d-flex justify-content-center handle">
+                        <i class="bi bi-list"></i>
+                    </div>
+                </div>
+                <!-- body -->
+                <div class="container-body">
+                    <div class="row container-topic">
+                        <div class="col-12">
+                            <input type="text" class="form-control  rounded-0 rounded-top topicTextLine" v-model="field.title" />
+                        </div>
+                    </div>
+                    <div class="row container-items">                      
+                        <div class="row">
+                            <div class="col-12">
+                                <input class= "form-control rounded-0 rounded-top itemTextLine" type="date" v-model="field.date">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <input class= "form-control rounded-0 rounded-top itemTextLine" type="time" v-model="field.time">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- footer -->
+                <div class="container-footer">
+                    <hr>
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <label class="col-auto col-form-label">{{field.name}}</label>
+                        </div>
+                        <div class="col-9">
+                            <div class="row d-flex justify-content-end">
+                                <div class="col-2 border-end" @click="onRemove(field)">
+                                    <i class="bi bi-trash"></i>
+                                </div>
+                                <div class="col-5">
+                                    <div class="input-group">              
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" v-model="field.required">
+                                            <label class="form-check-label">必填</label>
+                                        </div>
+                                    </div>
+                                </div>             
+                            </div>
+                        </div>
+                    </div>     
+                </div>  
+            </div>
+        </div>  
+    </script>
+
+    <!-- form-file -->
+    <script type="text/x-template" id="form-file">
+
+        <div class ="container mt-2" v-bind:id="field.id">
+            <div class="list-group-item rounded borderShow">
+                <!-- header -->
+                <div class="container-header">
+                    <div class="d-flex justify-content-center handle">
+                        <i class="bi bi-list"></i>
+                    </div>
+                </div>
+                <!-- body -->
+                <div class="container-body">
+                    <div class="row container-topic">
+                        <div class="col-12">
+                            <input type="text" class="form-control  rounded-0 rounded-top topicTextLine" v-model="field.title" />
+                        </div>
+                    </div>
+                    <div class="row container-items">
+                        <div class="col-6">
+                            <label>最小上傳數量</label>
+                            <input class= "form-control rounded-0 rounded-top itemTextLine" type="text"  v-model="field.mix">
+                        </div>
+                        <div class="col-6">
+                            <label>最大上傳數量</label>
+                            <input class= "form-control rounded-0 rounded-top itemTextLine" type="text"  v-model="field.max">
+                        </div>
+                    </div>
+                </div>
+                <!-- footer -->
+                <div class="container-footer">
+                    <hr>
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <label class="col-auto col-form-label">{{field.name}}</label>
+                        </div>
+                        <div class="col-9">
+                            <div class="row d-flex justify-content-end">
+                                <div class="col-2 border-end" @click="onRemove(field)">
+                                    <i class="bi bi-trash"></i>
+                                </div>
+                                <div class="col-5">
+                                    <div class="input-group">              
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" v-model="field.required">
+                                            <label class="form-check-label">必填</label>
+                                        </div>
+                                    </div>
+                                </div>             
+                            </div>
+                        </div>
+                    </div>     
+                </div>  
+            </div>
+        </div>  
+    </script>
+    <!-- #endregion -->
+
+    <script>
+        const vm = new Vue({
+            el: '#app',
+            data: {
+                actionType: '',
+                questSysId: 0,
+                enabled: {
+                    type: Boolean,
+                    required: true
+                },
+                dragging: false,
+                formControls: [],
+                itemType: "",
+                itemTypes: [],
+            },
+            created: async function () {
+
+                // 取得網址參數
+                const urlParams = new URLSearchParams(window.location.search);
+                this.questSysId = urlParams.get('questSysId');
+                this.actionType = urlParams.get('actionType');
+
+                // 取得下拉選單
+                let resp = {
+                    Message: null,
+                    ResultCode: 10,
+                    Source: [{
+                        isUse: true,
+                        questItemType: "10",
+                        questItemTypeName: "文字題",
+                    },
+                    {
+                        isUse: true,
+                        questItemType: "14",
+                        questItemTypeName: "單選題",
+                    },
+                    {
+                        isUse: true,
+                        questItemType: "16",
+                        questItemTypeName: "多選題",
+                    },
+                    {
+                        isUse: true,
+                        questItemType: "20",
+                        questItemTypeName: "數字題",
+                    },
+                    {
+                        isUse: true,
+                        questItemType: "22",
+                        questItemTypeName: "數字滑桿題",
+                    },
+                    ],
+                    Value: null,
+                }
+
+                this.itemTypes = resp.Source;
+
+                var doc = document.getElementById('doc');
+                new Sortable(doc, {
+                    handle: '.handle', // handle's class
+                    animation: 150,
+                    onEnd: this.onChang
+                });
+                this.getQuestD(this.questSysId);
+
+            },
+            methods: {
+                addElement: async function () {
+
+                    if (this.itemType === "") {
+                        alert('請選擇欲新增的題型');
+                        return;
+                    }
+                    const id = this.formControls.length + 1;
+                    const control = new fieldControl({
+                        id: id,
+                        questSysId: this.questSysId,
+                        type: this.getItemType(this.itemType.questItemType),
+                        name: this.itemType.questItemTypeName
+                    });
+                    this.formControls.unshift(control);
+                },
+                onSave: async function () {
+
+                    console.log(this.actionType)
+                    localStorage.formControls = JSON.stringify(this.formControls)
+                    console.log(localStorage.formControls)
+
+                    this.getQuestD(this.questSysId);
+                    alert('存檔成功')
+
+                    this.goBack('index', false)
+
+                    return
+
+                    alert(resp.Message)
+                },
+                onRemove: async function (row) {
+
+                    let flag = await checkComfirm('確定要刪除嗎?')
+
+                    if (flag !== true) {
+                        return;
+                    }
+
+                    this.formControls = await this.formControls.filter(x => {
+                        return x.id != row.id
+                    })
+
+                    this.formControls.forEach((e, index) => {
+                        e.id = index + 1
+                    });
+
+                    alert('刪除成功');
+
+                },
+                onChang(e) {
+                    let temp = this.formControls[e.newIndex];
+                    this.formControls[e.newIndex] = this.formControls[e.oldIndex];
+                    this.formControls[e.oldIndex] = temp;
+                    this.formControls.forEach((e, index) => {
+                        e.id = index + 1
+                    });
+                },
+                goBack: function (name, isSave = true,) {
+                    if (isSave === true && this.actionType === 'add') {
+                        this.onSave();
+                    }
+                    let para = `questSysId=${this.questSysId}&actionType=${this.actionType}`;
+                    goPage(name, para)
+                },
+                getQuestD: async function (questSysId) {
+                    if (localStorage.formControls === null) {
+                        return;
+                    }
+
+                    this.formControls = JSON.parse(localStorage.formControls)
+
+                },
+                getItemType(itemType) {
+                    switch (itemType) {
+                        case "10":
+                            return controlEnum.textbox;
+                        case "14":
+                            return controlEnum.radio;
+                        case "16":
+                            return controlEnum.checkbox;
+                        case "20":
+                            return controlEnum.number;
+                        case "22":
+                            return controlEnum.range;
+                        case "36":
+                            return controlEnum.date;
+                        case "38":
+                            return controlEnum.datetime;
+                        case "30":
+                            return controlEnum.file;
+
+                    }
+                    return '';
+                },
+            },
+        });
+        vm.$mount('#app');
+
+    </script>
+</body>
+
+
+</html>

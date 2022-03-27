@@ -1,0 +1,348 @@
+@import "ZhApp";
+
+.ui-mobile .ui-page-active{
+    overflow: visible;
+}
+
+#selectSort-button {
+    width: $titleBtnWidth;
+    border-radius: 10px;
+    // font-size: $titleBtnFontSize;
+}
+
+.wrapper {
+    grid-gap: 10px;
+    display: grid;
+    justify-items: center;
+    align-content: space-around;
+    /* repeat方式來指定我要幾欄幾列 */
+    /* auot-fill自動填滿 */
+    /* minmax(最小值, 最大值) */
+    /* 如同RWD，最小只會在10me，最大只會在1fr(會做自動分配) */
+    grid-template-columns: repeat(auto-fit, minmax(20px, 1fr));
+}
+
+#titleBtn {
+    .zh_titleContextButton {
+        width: 75vw;
+        border-radius: 10px;
+        font-size: $fontSize;
+    }
+}
+
+.statistics {
+    background-color: $darkModelFontColor;
+    margin: 20px 10px 0px 10px;
+    padding: 0px 0px 10px 0px;
+    border-radius: 10px;
+    text-align: center;
+
+    .statisticsTitle {
+        padding: 10px 0px 10px 0px;
+        border-radius: 10px 10px 0px 0px;
+        background-color: #acd6ff;
+        font-size: $titleSubheaderFontSize;
+        font-weight: bold;
+    }
+
+    .statisticsContext {
+        border-radius: 10px;
+        padding: 10px;
+        margin: 12px;
+        box-shadow: 3px 3px 4px 2px #cccccc;
+
+        .ui-block-a {
+            font-size: $titleSubheaderFontSize;
+            font-weight: bold;
+            margin: 10px 0px 10px 0px;
+            padding: 0px 29px 0px 29px;
+            border-right: 1px solid white;
+        }
+
+        .ui-block-b,
+        .ui-block-c {
+            .text {
+                margin: 10px 0px 0px 0px;
+                font-size: $fontSize;
+            }
+
+            .number {
+                margin: 5px 0px 0px 0px;
+                font-weight: bold;
+                font-size: m#{i}n(m#{a}x(4vmin, 1.2rem), 1.5rem);
+            }
+        }
+    }
+}
+
+.overView {
+    background-color: $darkModelFontColor;
+    margin: 20px 10px 0px 10px;
+    border-radius: 10px;
+    font-size: $fontSize;
+
+    .remark {
+        font-size: $remarkFontSize;
+        color: $remarkColor;
+    }
+
+    .divRight {
+        text-align: right;
+    }
+
+    .reportTitle {
+        padding: 10px 10px 10px 10px;
+        border-radius: 10px 10px 0px 0px;
+        background-color: #acd6ff;
+        font-weight: bold;
+
+        .ui-block-b {
+            text-align: right;
+        }
+
+        .reportMan {
+            padding: 5px 0px 5px 0px;
+        }
+
+        .reportdeadlineTime {
+            @extend .remark;
+            color: $warnColor;
+            font-weight: bold;
+        }
+
+        .tag {
+            background-color: #0066cc;
+            color: $darkModelFontColor;
+            width: auto;
+            display: inline-block;
+            padding: 5px;
+        }
+    }
+
+    .reportContext {
+        padding: 5px 10px 10px 10px;       
+
+        .progress {
+            .ui-block-a {
+                width: 15%;
+            }
+
+            .ui-block-b {
+                width: 70%;
+            }
+
+            .ui-block-c {
+                width: 15%;
+            }
+        }
+
+        .reportProgress {
+            margin: 0px 0px 0px 0px;
+            position: relative;
+            width: 100%;
+            height: 20px;
+            background-color: #ddd;
+
+            div {
+                margin: 0px 0px 0px 0px;
+            }
+        }
+
+        .reportBar {
+            position: absolute;
+            width: 1%;
+            height: 100%;
+            background-color: #4caf50;
+        }
+
+        .label {
+            text-align: center;
+            line-height: 20px;
+            color: $darkModelFontColor;
+        }
+    }
+
+    .reportFooter {
+        div {
+            margin: 0px 0px 0px 0px;
+        }
+
+        text-align: center; /* If you want to center it */
+        background-color: #0066cc;
+        padding: 4px;
+        color: $darkModelFontColor;
+
+        .ui-block-a {
+            border-right: 1px solid white;
+        }
+    }
+}
+
+#popOverView,#popDetailOverView{
+    left:3vw;
+    right: 3vw;
+    float:left; 
+    width:95vw; 
+    background-color:white;
+    box-shadow: 3px 3px 4px 2px #cccccc;
+    border-radius: 10px;
+    z-index:999;
+    text-decoration:none;
+}
+
+.singleText {
+    margin: 10px;
+    font-size: $fontSize;
+}
+
+.single {
+    background-color: $darkModelFontColor;
+    margin: 20px 10px 0px 10px;
+    border-radius: 10px;
+    font-size: $fontSize;
+
+    .remark {
+        font-size: $remarkFontSize;
+        color: $remarkColor;
+    }
+
+    .divRight {
+        text-align: right;
+    }
+
+    .singleTitle {
+        padding: 10px 10px 10px 10px;
+        border-radius: 10px 10px 0px 0px;
+        background-color: #f3a672;
+        font-weight: bold;
+
+        .reportMan {
+            padding: 5px 0px 5px 0px;
+        }
+    }
+
+    .singleContext {
+        padding: 5px 10px 10px 10px;
+
+        div {
+            margin: 10px 0px 0px 0px;
+        }
+    }
+
+    .reportFooter {
+        div {
+            margin: 0px 0px 0px 0px;
+        }
+
+        text-align: center; /* If you want to center it */
+        background-color: #0066cc;
+        padding: 4px;
+        color: $darkModelFontColor;
+
+        .ui-block-a {
+            border-right: 1px solid white;
+        }
+    }
+}
+
+.quest {
+    background-color: $darkModelFontColor;
+    margin: 20px 10px 10px 10px;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: $fontSize;
+
+    .remark {
+        font-size: $remarkFontSize;
+        color: $remarkColor;
+    }
+
+    .divRight {
+        text-align: right;
+    }
+
+    .questTitle {
+        padding: 10px 10px 10px 10px;
+        border-radius: 10px 10px 0px 0px;
+        font-weight: bold;
+
+        .reportMan {
+            padding: 5px 0px 5px 0px;
+        }
+    }
+
+    .questContext {
+        padding: 5px 10px 10px 10px;
+
+        div {
+            margin: 10px 0px 0px 0px;
+        }
+    }
+
+    .reportFooter {
+        div {
+            margin: 0px 0px 0px 0px;
+        }
+
+        text-align: center; /* If you want to center it */
+        background-color: #0066cc;
+        padding: 4px;
+        color: $darkModelFontColor;
+
+        .ui-block-a {
+            border-right: 1px solid white;
+        }
+    }
+}
+
+#selectItems {
+    margin: 20px 10px 0px 10px;
+    font-size: $fontSize;
+
+    .ui-grid-a {
+        display: flex;
+        align-items: center;
+    }
+
+    .ui-block-a {
+        width: 30%;
+    }
+
+    .ui-block-b {
+        width: 100% - 30%;
+
+        .ui-btn{
+            font-size: $fontSize;
+        }
+
+        input{
+            text-align: center;
+            background-color:	#F0F0F0;
+            color: black;
+        }
+    }
+}
+
+.questChart{
+    margin:40px 0px 0px 0px
+}
+
+.contentFinish {
+    background-image: url("../../images/stampFinish.png");
+    background-position: right bottom;
+    background-repeat: no-repeat;
+}
+
+#noContext{
+    text-align:center; 
+    font-size:5vmin;
+    color:white;
+    line-height:150px;
+    font-weight:bold
+}
+
+.wrapper-answer {
+    display: flex;
+    flex-wrap: wrap;
+
+  }

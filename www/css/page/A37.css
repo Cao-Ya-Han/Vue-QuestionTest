@@ -1,0 +1,359 @@
+@charset "UTF-8";
+body {
+  font-family: "Microsoft JhengHei";
+}
+
+#pageHeader {
+  background-color: #1d2088;
+  font-size: min(max(4vmin, 1.5rem), 20rem);
+  color: #FFF;
+  text-shadow: none;
+  margin-top: -1px;
+  top: -1px;
+  position: sticky;
+  width: 100%;
+  z-index: 100;
+}
+
+#title .ui-block-a {
+  width: 25%;
+}
+#title .ui-block-a img {
+  width: min(max(4vmin, 1.5rem), 20rem);
+  margin: 10px 0px 0px 10px;
+}
+#title .ui-block-b {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  white-space: normal;
+  text-align: center;
+  margin: 12px 0px 0px 0px;
+  width: 50%;
+}
+#title .ui-block-c {
+  width: 25%;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  white-space: normal;
+  text-align: center;
+  margin: 12px 0px 0px 0px;
+}
+#title .ui-block-c a img {
+  width: min(max(4vmin, 1.5rem), 20rem);
+}
+
+#titleBtn .zh_titleContextText {
+  font-size: min(max(4vmin, 1.2rem), 1.5rem);
+  color: #FFF;
+  margin: 20px 0px 10px 0px;
+  text-decoration: none;
+}
+#titleBtn .zh_titleContextButton {
+  width: 18vw;
+  border-radius: 10px;
+  font-size: min(max(4vmin, 1.2rem), 1.5rem);
+}
+
+.selectItemshide {
+  display: none;
+}
+
+.ui-mobile .ui-page-active {
+  overflow: visible;
+}
+
+#selectSort-button {
+  width: 18vw;
+  border-radius: 10px;
+}
+
+.wrapper {
+  grid-gap: 10px;
+  display: grid;
+  justify-items: center;
+  align-content: space-around;
+  /* repeat方式來指定我要幾欄幾列 */
+  /* auot-fill自動填滿 */
+  /* minmax(最小值, 最大值) */
+  /* 如同RWD，最小只會在10me，最大只會在1fr(會做自動分配) */
+  grid-template-columns: repeat(auto-fit, minmax(20px, 1fr));
+}
+
+#titleBtn .zh_titleContextButton {
+  width: 75vw;
+  border-radius: 10px;
+  font-size: min(max(4vmin, 1rem), 1.2rem);
+}
+
+.statistics {
+  background-color: #FFF;
+  margin: 20px 10px 0px 10px;
+  padding: 0px 0px 10px 0px;
+  border-radius: 10px;
+  text-align: center;
+}
+.statistics .statisticsTitle {
+  padding: 10px 0px 10px 0px;
+  border-radius: 10px 10px 0px 0px;
+  background-color: #acd6ff;
+  font-size: min(max(4vmin, 1.2rem), 1.5rem);
+  font-weight: bold;
+}
+.statistics .statisticsContext {
+  border-radius: 10px;
+  padding: 10px;
+  margin: 12px;
+  box-shadow: 3px 3px 4px 2px #cccccc;
+}
+.statistics .statisticsContext .ui-block-a {
+  font-size: min(max(4vmin, 1.2rem), 1.5rem);
+  font-weight: bold;
+  margin: 10px 0px 10px 0px;
+  padding: 0px 29px 0px 29px;
+  border-right: 1px solid white;
+}
+.statistics .statisticsContext .ui-block-b .text,
+.statistics .statisticsContext .ui-block-c .text {
+  margin: 10px 0px 0px 0px;
+  font-size: min(max(4vmin, 1rem), 1.2rem);
+}
+.statistics .statisticsContext .ui-block-b .number,
+.statistics .statisticsContext .ui-block-c .number {
+  margin: 5px 0px 0px 0px;
+  font-weight: bold;
+  font-size: min(max(4vmin, 1.2rem), 1.5rem);
+}
+
+.overView {
+  background-color: #FFF;
+  margin: 20px 10px 0px 10px;
+  border-radius: 10px;
+  font-size: min(max(4vmin, 1rem), 1.2rem);
+}
+.overView .remark, .overView .reportTitle .reportdeadlineTime {
+  font-size: min(max(4vmin, 0.5rem), 0.8rem);
+  color: #6C6C6C;
+}
+.overView .divRight {
+  text-align: right;
+}
+.overView .reportTitle {
+  padding: 10px 10px 10px 10px;
+  border-radius: 10px 10px 0px 0px;
+  background-color: #acd6ff;
+  font-weight: bold;
+}
+.overView .reportTitle .ui-block-b {
+  text-align: right;
+}
+.overView .reportTitle .reportMan {
+  padding: 5px 0px 5px 0px;
+}
+.overView .reportTitle .reportdeadlineTime {
+  color: #EA0000;
+  font-weight: bold;
+}
+.overView .reportTitle .tag {
+  background-color: #0066cc;
+  color: #FFF;
+  width: auto;
+  display: inline-block;
+  padding: 5px;
+}
+.overView .reportContext {
+  padding: 5px 10px 10px 10px;
+}
+.overView .reportContext .progress .ui-block-a {
+  width: 15%;
+}
+.overView .reportContext .progress .ui-block-b {
+  width: 70%;
+}
+.overView .reportContext .progress .ui-block-c {
+  width: 15%;
+}
+.overView .reportContext .reportProgress {
+  margin: 0px 0px 0px 0px;
+  position: relative;
+  width: 100%;
+  height: 20px;
+  background-color: #ddd;
+}
+.overView .reportContext .reportProgress div {
+  margin: 0px 0px 0px 0px;
+}
+.overView .reportContext .reportBar {
+  position: absolute;
+  width: 1%;
+  height: 100%;
+  background-color: #4caf50;
+}
+.overView .reportContext .label {
+  text-align: center;
+  line-height: 20px;
+  color: #FFF;
+}
+.overView .reportFooter {
+  text-align: center;
+  /* If you want to center it */
+  background-color: #0066cc;
+  padding: 4px;
+  color: #FFF;
+}
+.overView .reportFooter div {
+  margin: 0px 0px 0px 0px;
+}
+.overView .reportFooter .ui-block-a {
+  border-right: 1px solid white;
+}
+
+#popOverView, #popDetailOverView {
+  left: 3vw;
+  right: 3vw;
+  float: left;
+  width: 95vw;
+  background-color: white;
+  box-shadow: 3px 3px 4px 2px #cccccc;
+  border-radius: 10px;
+  z-index: 999;
+  text-decoration: none;
+}
+
+.singleText {
+  margin: 10px;
+  font-size: min(max(4vmin, 1rem), 1.2rem);
+}
+
+.single {
+  background-color: #FFF;
+  margin: 20px 10px 0px 10px;
+  border-radius: 10px;
+  font-size: min(max(4vmin, 1rem), 1.2rem);
+}
+.single .remark, .single .overView .reportTitle .reportdeadlineTime, .overView .reportTitle .single .reportdeadlineTime {
+  font-size: min(max(4vmin, 0.5rem), 0.8rem);
+  color: #6C6C6C;
+}
+.single .divRight {
+  text-align: right;
+}
+.single .singleTitle {
+  padding: 10px 10px 10px 10px;
+  border-radius: 10px 10px 0px 0px;
+  background-color: #f3a672;
+  font-weight: bold;
+}
+.single .singleTitle .reportMan {
+  padding: 5px 0px 5px 0px;
+}
+.single .singleContext {
+  padding: 5px 10px 10px 10px;
+}
+.single .singleContext div {
+  margin: 10px 0px 0px 0px;
+}
+.single .reportFooter {
+  text-align: center;
+  /* If you want to center it */
+  background-color: #0066cc;
+  padding: 4px;
+  color: #FFF;
+}
+.single .reportFooter div {
+  margin: 0px 0px 0px 0px;
+}
+.single .reportFooter .ui-block-a {
+  border-right: 1px solid white;
+}
+
+.quest {
+  background-color: #FFF;
+  margin: 20px 10px 10px 10px;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: min(max(4vmin, 1rem), 1.2rem);
+}
+.quest .remark, .quest .overView .reportTitle .reportdeadlineTime, .overView .reportTitle .quest .reportdeadlineTime {
+  font-size: min(max(4vmin, 0.5rem), 0.8rem);
+  color: #6C6C6C;
+}
+.quest .divRight {
+  text-align: right;
+}
+.quest .questTitle {
+  padding: 10px 10px 10px 10px;
+  border-radius: 10px 10px 0px 0px;
+  font-weight: bold;
+}
+.quest .questTitle .reportMan {
+  padding: 5px 0px 5px 0px;
+}
+.quest .questContext {
+  padding: 5px 10px 10px 10px;
+}
+.quest .questContext div {
+  margin: 10px 0px 0px 0px;
+}
+.quest .reportFooter {
+  text-align: center;
+  /* If you want to center it */
+  background-color: #0066cc;
+  padding: 4px;
+  color: #FFF;
+}
+.quest .reportFooter div {
+  margin: 0px 0px 0px 0px;
+}
+.quest .reportFooter .ui-block-a {
+  border-right: 1px solid white;
+}
+
+#selectItems {
+  margin: 20px 10px 0px 10px;
+  font-size: min(max(4vmin, 1rem), 1.2rem);
+}
+#selectItems .ui-grid-a {
+  display: flex;
+  align-items: center;
+}
+#selectItems .ui-block-a {
+  width: 30%;
+}
+#selectItems .ui-block-b {
+  width: 70%;
+}
+#selectItems .ui-block-b .ui-btn {
+  font-size: min(max(4vmin, 1rem), 1.2rem);
+}
+#selectItems .ui-block-b input {
+  text-align: center;
+  background-color: #F0F0F0;
+  color: black;
+}
+
+.questChart {
+  margin: 40px 0px 0px 0px;
+}
+
+.contentFinish {
+  background-image: url("../../images/stampFinish.png");
+  background-position: right bottom;
+  background-repeat: no-repeat;
+}
+
+#noContext {
+  text-align: center;
+  font-size: 5vmin;
+  color: white;
+  line-height: 150px;
+  font-weight: bold;
+}
+
+.wrapper-answer {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/*# sourceMappingURL=A37.css.map */

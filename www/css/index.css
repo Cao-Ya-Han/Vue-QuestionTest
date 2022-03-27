@@ -1,0 +1,293 @@
+* {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+
+/* #region iphone SE w320*/
+.zh-tb {
+  display: table;
+  width: 100%;
+}
+
+.zh-tr {
+  display: table-row;
+}
+
+.zh-td {
+  display: table-cell;
+  max-width: 260px;
+}
+.paddingDiv{
+  padding:0px 30px 20px 30px;
+}
+/* #endregion */
+
+/* #region iphone 6~x w>320*/
+@media screen and (min-width: 321px) {
+  .zh-tb {
+    display: table;
+    width: 100%;
+  }
+
+  .zh-tr {
+    display: table-row;
+  }
+
+  .zh-td {
+    display: table-cell;
+  }
+  .paddingDiv{
+    padding:0px 40px 20px 40px;
+  }
+}
+/* #endregion */
+
+/* #region ipad w768*/
+@media screen and (min-width: 767px) {
+  .paddingDiv{
+    padding:0px 77px 20px 77px;
+  }
+}
+/* #endregion */
+
+/* #region ipad pro w1024*/
+@media screen and (min-width: 1023px) {
+  .paddingDiv{
+    padding:0px 102px 20px 102px;
+  }
+}
+/* #endregion */
+
+#btnReg,
+#btnLogin,
+#btnLogin0,
+#btnLogin2 {
+  background-color: #1d2088;
+  border: 3px solid;
+  color: white;
+  text-shadow: 0px 0px 0px #000;
+  font-family: 'Microsoft JhengHei';
+  font-size: 24px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-weight: 100;
+}
+
+#btnForget {
+  background-color: rgba(0, 0, 0, 0);
+  color: white;
+  font-family: Microsoft JhengHei;
+  font-weight: normal;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+
+body {
+  -webkit-touch-callout: none;
+  -webkit-text-size-adjust: none;
+  -webkit-user-select: none;
+  /*background-color:#E4E4E4;*/
+  background-color: #1d2088;
+  background-image: linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+  background-image: -webkit-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+  background-image: -ms-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+  background-image: -webkit-gradient(linear,
+      left top,
+      left bottom,
+      /*color-stop(0, #A7A7A7),
+        color-stop(0.51, #E4E4E4)*/
+      /*color-stop(0, #1d2088),
+        color-stop(0.51, #1d2088)*/
+      color-stop(0, #F9F9F9),
+      color-stop(0.51, #F9F9F9));
+  background-attachment: fixed;
+  font-family: 'HelveticaNeue-Light', 'HelveticaNeue', Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+  text-transform: none;
+  width: 100%;
+
+  background-color: #32383d;
+  font-family: 'RobotoRegular', 'Droid Sans', 'Segoe UI', Segoe, 'San Francisco', 'Helvetica Neue', Helvetica, Arial, Geneva, sans-serif;
+  font-size: 12px;
+}
+
+.app {
+  background: url(../images/cordova.png) no-repeat center top;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 50px;
+  width: 225px;
+  text-align: center;
+  padding: 180px 0px 0px 0px;
+  margin: -115px 0px 0px -112px;
+}
+
+@media screen and (min-aspect-ratio: 1/1) and (min-width:400px) {
+  .app {
+    background-position: left center;
+    padding: 75px 0px 75px 170px;
+    margin: -90px 0px 0px -198px;
+  }
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: normal;
+  margin: 0px;
+  overflow: visible;
+  padding: 0px;
+  text-align: center;
+}
+
+.event {
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  color: #FFFFFF;
+  font-size: 12px;
+  margin: 0px 30px;
+  padding: 2px 0px;
+}
+
+.event.listening {
+  background-color: #333333;
+  display: block;
+}
+
+.event.received {
+  background-color: #4B946A;
+  display: none;
+}
+
+@keyframes fade {
+  from {
+    opacity: 1.0;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+
+  to {
+    opacity: 1.0;
+  }
+}
+
+@-webkit-keyframes fade {
+  from {
+    opacity: 1.0;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+
+  to {
+    opacity: 1.0;
+  }
+}
+
+.blink {
+  animation: fade 3000ms infinite;
+  -webkit-animation: fade 3000ms infinite;
+}
+
+/* jos add 1206 codepush */
+#myBar {
+  margin: 30px;
+  max-width: 100%;
+  height: 8px;
+  position: relative;
+  text-align: center;
+}
+
+
+.page-wrapper {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+}
+
+.blur-it {
+  -webkit-filter: blur(4px);
+  filter: blur(4px);
+}
+
+
+.modal-wrapper {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* background: rgba(41, 171, 164, 0.8); */
+  visibility: hidden;
+  opacity: 0;
+  -webkit-transition: all 0.25s ease-in-out;
+  transition: all 0.25s ease-in-out;
+}
+
+.modal-wrapper.open {
+  opacity: 1;
+  visibility: visible;
+  display: none;
+}
+
+.modal {
+  width: 80%;
+  height: 300px;
+  display: block;
+  margin: 0 auto;
+  position: relative;
+  top: 60%;
+  /* left: 50%; */
+  background: #fff;
+  opacity: 0;
+  -webkit-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+
+.modal-wrapper.open .modal {
+  margin-top: -200px;
+  opacity: 1;
+}
+
+.head {
+  width: 100%;
+  height: 60px;
+  /* padding: 12px 30px; */
+  overflow: hidden;
+  background: #e2525c;
+}
+
+.head h2 {
+  color: #FFFFFF;
+  font-size: 30px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.btn-close {
+  font-size: 28px;
+  display: block;
+  float: right;
+  color: #fff;
+}
+
+.codePushContent {
+  padding: 10%;
+}
+
+.good-job {
+  text-align: center;
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+  color: #e2525c;
+}
+
+.good-job h1 {
+  font-size: 45px;
+}

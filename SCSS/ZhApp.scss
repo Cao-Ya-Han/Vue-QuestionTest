@@ -1,0 +1,84 @@
+$headerColor: #1d2088;
+$headerFontSize: m#{i}n(m#{a}x(4vmin, 1.5rem), 20rem);
+$headePicture: m#{i}n(m#{a}x(4vmin, 1.5rem), 20rem);
+
+$titleSubheaderFontSize: m#{i}n(m#{a}x(4vmin, 1.2rem), 1.5rem);
+$titleBtnWidth: 18vw;
+
+$fontSize: m#{i}n(m#{a}x(4vmin, 1.0rem), 1.2rem);
+$remarkFontSize:m#{i}n(m#{a}x(4vmin, 0.5rem), 0.8rem);
+$remarkColor:#6C6C6C;
+$warnColor:#EA0000;
+$darkModelFontColor:#FFF;
+
+body {
+    font-family: "Microsoft JhengHei";
+}
+
+#pageHeader {
+    background-color: $headerColor;
+    font-size: $headerFontSize;
+    color: $darkModelFontColor;
+    text-shadow: none;
+    margin-top: -1px;
+
+    //橫向滿版置頂
+    top: -1px;
+    position: sticky;
+    width: 100%;
+    z-index: 100;
+}
+
+#title {
+    .ui-block-a {
+        width: 25%;      
+            img {
+                width: $headePicture;
+                margin: 10px 0px 0px 10px;
+            }        
+    }
+
+    .ui-block-b {
+        display: -webkit-box;
+        -webkit-line-clamp: 2; //行數
+        -webkit-box-orient: vertical;
+        white-space: normal;
+        text-align: center;
+        margin: 12px 0px 0px 0px;
+        width: 50%;
+    }
+
+    .ui-block-c {
+        width: 25%;
+        display: -webkit-box;
+        -webkit-line-clamp: 2; //行數
+        -webkit-box-orient: vertical;
+        white-space: normal;
+        text-align: center;
+        margin: 12px 0px 0px 0px;
+
+        a{
+            img{
+            width:$headePicture;
+            }
+        }
+    }
+}
+
+#titleBtn {
+    .zh_titleContextText{
+        font-size: $titleSubheaderFontSize;
+        color: $darkModelFontColor;
+        margin: 20px 0px 10px 0px;
+        text-decoration: none;
+    }
+    .zh_titleContextButton {
+        width: $titleBtnWidth;
+        border-radius: 10px;
+        font-size: $titleSubheaderFontSize;
+    }
+}
+
+.selectItemshide {
+    display: none;
+}
